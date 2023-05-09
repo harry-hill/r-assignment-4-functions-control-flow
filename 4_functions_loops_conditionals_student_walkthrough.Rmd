@@ -1,0 +1,286 @@
+## Functions and Conditionals
+
+### Conditionals
+
+The basic syntax for an if statement goes like this:
+
+```{r}
+# flow is similar to python
+if (logical statement) {
+  do something
+} else {
+  do something else
+}
+```
+
+The logical statements should boil down to a boolean; for example:
+
+```{r}
+# python knows where if statements end because of tabs
+# R doesnt use tabs or spaces like that, it uses curly braces to separate sections of code
+a <- 10
+
+if (a <= 5) {
+  print(a)
+} else {
+  print("it's more than 5")
+}
+```
+
+We can also add else if statements in the middle if we need more options.
+
+```{r}
+# '&' =~= 'and' (python)
+# '|' =~= 'or' (python)
+# 'else if' =~= 'elif' (python)
+# '==' equal to
+
+a <- 15
+
+if (a <= 5) {
+  print("small")
+} else if (a > 5 & a <= 10) {
+  print("medium")
+} else if (a > 10 | a == 7) {
+  print("large")
+} else {
+  print("huge")
+}
+
+```
+
+Neat! We can also nest conditionals just like we do in Python.
+
+```{r}
+a <- 5
+
+if (a / 2 != 0) {
+  if (a == 5){
+    print("a is 5")
+  }
+}
+```
+
+Neat! Now, let's look at another core part of R programming - Loops!
+
+### Loops
+
+```{r}
+# for (iterable) {action}
+for (value in 1:5) {
+  # Paste is a concatenation function, auto spaces
+  print(paste(value,"is greater than",value - 1))
+}
+```
+
+We can also do nifty stuff with our vectors, such as apply changes to specific indices of our data.
+
+```{r}
+a_vector <- c(1,1,1,1,1,1,1)
+
+# Change the first, third, and sixth elements to the value 6
+for (i in c(1,3,6)){
+  a_vector[i] <- 6
+}
+
+a_vector
+```
+
+We can loop over more than just lists:
+
+```{r}
+# looping over a matrix
+# 2x2 matrix of 1s
+mat <-  matrix(1, nrow = 2, ncol = 2)
+mat
+
+# change a 1 to a 0 each loop 
+# loops through columns in row 1, then cols in row 2
+# interesting application for algorithms
+for (row in 1:2){
+  for (col in 1:2){
+    mat[row, col] <- 0
+    print(mat)
+  }
+}
+```
+
+Like Python, we have while loops in R:
+
+```{r}
+b <- 0
+while (b < 10) {
+  # increase b by 2
+  b <- b + 2
+  # print b
+  print(b)
+}
+```
+
+## Functions
+
+When should we use functions?
+
+```{r}
+# functions are for when we want to repeat something 2-3 times or when we want to test whats happening on smaller datasets to make sure it handles weird stuff correctly for larger datasets
+# when working with a companies data, it takes a long time to work through it and electricity costs money so save money!
+our_function <- function(optional_params){
+  # do some stuff
+}
+
+our_function(params)
+```
+
+An example:
+
+```{r}
+# Start with a vector of temperatures (C˚)
+test_temp <- c(16.550540, 26.942005, 32.591088, 8.580116, 28.003873, 28.542391, 20.976820, 21.173577, 21.048836, 18.769735)
+
+# Then we want a function that converts from C to F:
+# 'dat' because 'data' is a keyword in R
+c_to_f <- function(dat){
+  temp_fahr <- dat*(9/5) + 32
+  
+  return(temp_fahr)
+}
+
+print(c_to_f(26))
+
+# the real power in functions like this is mapping it onto a vector!
+```
+
+This is all cool.. but it didn't do anything. We need to call the function!
+
+```{r}
+# map function over all values in vector (no for loop)
+data_fahr <- c_to_f(test_temp)
+data_fahr
+```
+
+Notice that in the background here, we are looping over each item in the array, but we never write a for loop! Keep this in mind, since when you pass in a large data set, the changes made by functions aren't quite immediate - the computer does have to go over each item in your data set, and change them one at a time.
+
+A shortcut of sorts is to use the `apply()` function, which operates very similarly to Python's `map()`. Note that `apply` syntax goes as follows: `apply(X, MARGIN, FUN)` where X is the data set to use, MARGIN is specification for rows or columns, and FUN is the function to apply.
+
+```{r}
+# apply() maps on purpose which gives you more control then just using a function on a matrix
+test_mat <- matrix(c(1,1,1,2,2,2), nrow <- 2)
+test_mat
+
+# 'sum' is a built in function to sum the values
+# '1'; apply sum to each row in test_mat
+# if use '2'; sum columns instead
+apply(test_mat, 1, sum) 
+```
+
+It is common to use `mean`, `median`, `sum`, `min`, or `max` with `apply`, but we can also use our user-defined functions as well. Note that apply() *only works with matrices*.
+
+```{r}
+# apply only works with matrices
+test_temp_mat <- matrix(c(16.550540, 26.942005, 32.591088, 8.580116, 28.003873, 28.542391, 20.976820, 21.173577, 21.048836, 18.769735), nrow = 2)
+
+apply(test_temp_mat, 1, c_to_f)
+
+```
+
+### Homework
+
+1.  Do 5 CodeWars problems in R. Share your solutions here:
+
+    ```{r}
+    # 1. In this simple assignment you are given a number and have to make it negative. But maybe the number is already negative?
+    make_negative <- function(num){
+      if (num <= 0) {
+        return(num)
+      }else if(num > 0){
+        return(num*-1)
+      }
+    }
+
+    # 2. Сalculate how many years ago the father was twice as old as his son (or in how many years he will be twice as old). The answer is always greater or equal to 0, no matter if it was in the past or it is in the future.
+    twice_as_old <- function(dad_years_old, son_years_old){
+       return(abs(dad_years_old - 2*son_years_old))
+    }
+
+    # 3. Create a function which translates a given DNA string into RNA. All Thymine 'T' must be replaced with Uracil 'U'.
+    dna_to_rna <- function(dna){
+        gsub(pattern = 'T',replacement = 'U', dna)    
+    }
+
+    # 4. This function should test if the factor is a factor of base.Return true if it is a factor or false if it is not.
+    check_for_factor <- function(base, factor) {
+      if((base %% factor) == 0){
+        return(TRUE)
+        }else if((base %% factor) != 0){
+        return(FALSE)
+      }
+    }
+
+    # 5. Very simple, given an integer or a floating-point number, find its opposite.
+    opposite <- function(number){
+      return(number*-1)
+    }
+    ```
+
+2.  Create a function that checks an input of type `int` and returns fizz if the number is a multiple of 3, buzz if the number is a multiple of 5, and fizzbuzz if the number is a multiple of 3 and 5.
+
+    ```{r}
+    # bonus points if you map over it
+    # range function to gen range 1:20 then map over
+
+    # function to check int and return word
+    num = seq(1,20,by=1)
+    fizz <- function(number){
+      if((number%%3)==0){
+        return('fizz')
+      }else if((number%%5)==0){
+        return('buzz')
+      }else if(((number%%3)==0)&(number%%5)==0)
+        return('fizzbuzz')
+    }
+
+    # turn sequence of 1:20 into a 4x5 matrix
+    my_mat <- matrix(seq(1,20,by=1),4)
+    my_mat
+
+    # apply fizz to each individual element in the matrix
+    apply(my_mat,c(1,2), fizz)
+    ```
+
+3.  **Mario Challenge:** In the classic Super Mario games, Mario ends each level by ascending a flight of stairs and leaping off the top to arrive at the castle at the end. (See [here](https://youtu.be/-avspZlbOWU?t=55) for details). We can imagine that each of the bricks of the stairs is a character X. Create a function that prints out a set of stairs. For example:
+
+    If the function is called marioStairs() and we pass in the value 4, we would expect to see stairs with a length of 4 and a height of 4:
+
+    X
+
+    XX
+
+    XXX
+
+    XXXX
+
+    ```{r}
+    # You may feel more comfortable figuring this out in Python first, then translating into R later.
+    mario_stairs <- function(n){
+      # make a vector of 'X'
+      x <- c('X')
+      # continue while count < 5
+      count <- 0
+      while (count < n){
+        # print the vector
+        print(x)
+        # each loop add one 'X' to the vector and +1 to count
+        count <- count + 1
+        x <- append(x, 'X')
+      }
+    }
+
+    mario_stairs(4)
+
+
+
+
+
+
+
+    ```
